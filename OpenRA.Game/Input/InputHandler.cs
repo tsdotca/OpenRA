@@ -18,7 +18,7 @@ namespace OpenRA
 		// ignore all input
 		public void ModifierKeys(Modifiers mods) { }
 		public void OnKeyInput(KeyInput input) { }
-		public void OnTextInput(string text) { }
+		public void OnTextInput(KeyInput text) { }
 		public void OnMouseInput(MouseInput input) { }
 	}
 
@@ -40,9 +40,9 @@ namespace OpenRA
 			Sync.RunUnsynced(Game.Settings.Debug.SyncCheckUnsyncedCode, world, () => Ui.HandleKeyPress(input));
 		}
 
-		public void OnTextInput(string text)
+		public void OnTextInput(KeyInput input)
 		{
-			Sync.RunUnsynced(Game.Settings.Debug.SyncCheckUnsyncedCode, world, () => Ui.HandleTextInput(text));
+			Sync.RunUnsynced(Game.Settings.Debug.SyncCheckUnsyncedCode, world, () => Ui.HandleTextInput(input));
 		}
 
 		public void OnMouseInput(MouseInput input)

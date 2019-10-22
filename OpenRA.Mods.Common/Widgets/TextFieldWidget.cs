@@ -31,6 +31,8 @@ namespace OpenRA.Mods.Common.Widgets
 			set
 			{
 				text = RemoveInvalidCharacters(value ?? "");
+				Console.WriteLine("value = {0}".F(value ?? "value NULL?!"));
+				Console.WriteLine("text = {0}".F(text ?? "text NULL?!"));
 				CursorPosition = CursorPosition.Clamp(0, text.Length);
 				ClearSelection();
 			}
@@ -449,7 +451,7 @@ namespace OpenRA.Mods.Common.Widgets
 
 						clipboardText = clipboardText.Trim();
 						if (clipboardText.Length > 0)
-							HandleTextInput(clipboardText);
+							PasteText(clipboardText);
 					}
 
 					break;
@@ -469,14 +471,19 @@ namespace OpenRA.Mods.Common.Widgets
 			return true;
 		}
 
-		public override bool HandleTextInput(string input)
+		public override bool HandleTextInput(KeyInput input)
+		{
+			return PasteText(input.UnicodeChar);
+		}
+
+		public bool PasteText(string text)
 		{
 			if (!HasKeyboardFocus || IsDisabled())
 				return false;
 
 			// Validate input
-			input = RemoveInvalidCharacters(input);
-			if (input.Length == 0)
+			text = RemoveInvalidCharacters(text);
+			if (text.Length == 0)
 				return true;
 
 			if (selectionStartIndex != -1)
@@ -485,14 +492,14 @@ namespace OpenRA.Mods.Common.Widgets
 			if (MaxLength > 0 && Text.Length >= MaxLength)
 				return true;
 
-			var pasteLength = input.Length;
+			var pasteLength = text.Length;
 
 			// Truncate the pasted string if the total length (current + paste) is greater than the maximum.
 			if (MaxLength > 0 && MaxLength > Text.Length)
-				pasteLength = Math.Min(input.Length, MaxLength - Text.Length);
+				pasteLength = Math.Min(text.Length, MaxLength - Text.Length);
 
 			// Write directly to the Text backing field to avoid repeating the invalid character validation
-			text = text.Insert(CursorPosition, input.Substring(0, pasteLength));
+			this.text = this.text.Insert(CursorPosition, text.Substring(0, pasteLength));
 			CursorPosition += pasteLength;
 			ClearSelection();
 			OnTextEdited();
@@ -563,6 +570,7 @@ namespace OpenRA.Mods.Common.Widgets
 			var pos = RenderOrigin;
 
 			var textSize = font.Measure(apparentText);
+			System.Console.WriteLine("CursorPosition = {0}".F(CursorPosition));
 			var cursorPosition = font.Measure(apparentText.Substring(0, CursorPosition));
 
 			var disabled = IsDisabled();

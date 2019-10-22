@@ -17,8 +17,8 @@ namespace OpenRA
 	{
 		void ModifierKeys(Modifiers mods);
 		void OnKeyInput(KeyInput input);
+		void OnTextInput(KeyInput input);
 		void OnMouseInput(MouseInput input);
-		void OnTextInput(string text);
 	}
 
 	public enum MouseInputEvent { Down, Move, Up, Scroll }
@@ -68,7 +68,7 @@ namespace OpenRA
 		public Keycode Key;
 		public Modifiers Modifiers;
 		public int MultiTapCount;
-		public char UnicodeChar;
+		public string UnicodeChar;  // FIXME
 		public bool IsRepeat;
 	}
 }

@@ -157,7 +157,18 @@ namespace OpenRA.Platforms.Default
 						{
 							var rawBytes = new byte[SDL.SDL_TEXTINPUTEVENT_TEXT_SIZE];
 							unsafe { Marshal.Copy((IntPtr)e.text.text, rawBytes, 0, SDL.SDL_TEXTINPUTEVENT_TEXT_SIZE); }
-							inputHandler.OnTextInput(Encoding.UTF8.GetString(rawBytes, 0, Array.IndexOf(rawBytes, (byte)0)));
+							var unicodeChar = Encoding.UTF8.GetString(rawBytes, 0, Array.IndexOf(rawBytes, (byte)0));
+							System.Console.WriteLine("char is {0}".F(unicodeChar));
+							var keyEvent = new KeyInput
+							{
+								Event = KeyInputEvent.Down,
+								Key = Keycode.UNKNOWN,
+								Modifiers = mods,
+								UnicodeChar = unicodeChar,
+								MultiTapCount = 0,  // FIXME?
+								IsRepeat = e.key.repeat != 0
+							};
+							inputHandler.OnTextInput(keyEvent);
 							break;
 						}
 
@@ -177,7 +188,7 @@ namespace OpenRA.Platforms.Default
 								Event = type,
 								Key = keyCode,
 								Modifiers = mods,
-								UnicodeChar = (char)e.key.keysym.sym,
+								UnicodeChar = e.key.keysym.sym.ToString(),
 								MultiTapCount = tapCount,
 								IsRepeat = e.key.repeat != 0
 							};

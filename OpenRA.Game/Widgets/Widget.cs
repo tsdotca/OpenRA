@@ -134,12 +134,12 @@ namespace OpenRA.Widgets
 			return Root.HandleKeyPressOuter(e);
 		}
 
-		public static bool HandleTextInput(string text)
+		public static bool HandleTextInput(KeyInput input)
 		{
 			if (KeyboardFocusWidget != null)
-				return KeyboardFocusWidget.HandleTextInputOuter(text);
+				return KeyboardFocusWidget.HandleTextInputOuter(input);
 
-			return Root.HandleTextInputOuter(text);
+			return Root.HandleTextInputOuter(input);
 		}
 
 		public static void ResetAll()
@@ -418,20 +418,20 @@ namespace OpenRA.Widgets
 			return handled;
 		}
 
-		public virtual bool HandleTextInput(string text) { return false; }
+		public virtual bool HandleTextInput(KeyInput input) { return false; }
 
-		public virtual bool HandleTextInputOuter(string text)
+		public virtual bool HandleTextInputOuter(KeyInput input)
 		{
 			if (!IsVisible())
 				return false;
 
 			// Can any of our children handle this?
 			foreach (var child in Children.OfType<Widget>().Reverse())
-				if (child.HandleTextInputOuter(text))
+				if (child.HandleTextInputOuter(input))
 					return true;
 
 			// Do any widgety behavior (enter text etc)
-			var handled = HandleTextInput(text);
+			var handled = HandleTextInput(input);
 
 			return handled;
 		}
